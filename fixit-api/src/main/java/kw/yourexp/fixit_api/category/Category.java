@@ -1,16 +1,39 @@
 package kw.yourexp.fixit_api.category;
 
-import org.springframework.cglib.core.Local;
+import jakarta.persistence.*;
+import kw.yourexp.fixit_api.center.Center;
+import kw.yourexp.fixit_api.common.BaseEntity;
+import kw.yourexp.fixit_api.post.Post;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Category {
-    private Integer id;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+@Entity
+public class Category extends BaseEntity {
     private String nameAr;
+
     private String nameEn;
-//    private Integer parentId;
-    private LocalDateTime createdAt;
-    private String createdBy;
-    private LocalDateTime modifiedAt;
-    private String modifiedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_category_id")
+    private Category parentCategory;
+
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL)
+    private List<Category> subCategories = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "categories")
+    private List<Post> posts = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "specialties")
+    private List<Center> centers = new ArrayList<>();
 }
